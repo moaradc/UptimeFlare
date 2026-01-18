@@ -63,31 +63,16 @@ const workerConfig: WorkerConfig = {
       timeout: 10000,
     },
     {
-      id: 'MOARA-Blog-Netlify',
-      name: '主博客节点 (Netlify)',
-      method: 'HEAD',
-      target: 'https://blog.945426.xyz/',
-      statusPageLink: 'https://blog.945426.xyz/',
-      hideLatencyChart: false,
-      expectedCodes: [200],
-      timeout: 10000,
-      headers: {
-        'User-Agent': 'Uptimeflare',
-        'X-Uptime-Secret': 'moara-bypass-key'
-      }
-    },
-    {
       id: 'MOARA-Blog-Vercel',
       name: '备用博客节点 (Vercel)',
       method: 'HEAD',
-      target: 'https://blog2.945426.xyz/',
+      target: 'https://blog2.945426.xyz/favicon.jpg',
       statusPageLink: 'https://blog2.945426.xyz/',
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
       headers: {
         'User-Agent': 'Uptimeflare',
-        'X-Uptime-Secret': 'moara-bypass-key'
       }
     },
     {
