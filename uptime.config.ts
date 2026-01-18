@@ -65,7 +65,7 @@ const workerConfig: WorkerConfig = {
     {
       id: 'MOARA-Blog',
       name: '主博客节点',
-      method: 'HEAD',
+      method: 'GET',
       target: 'https://blog.945426.xyz/',
       statusPageLink: 'https://blog.945426.xyz/',
       hideLatencyChart: false,
@@ -75,7 +75,7 @@ const workerConfig: WorkerConfig = {
     {
       id: 'MOARA-Blog',
       name: '备用博客节点',
-      method: 'HEAD',
+      method: 'GET',
       target: 'https://blog2.945426.xyz/',
       statusPageLink: 'https://blog2.945426.xyz/',
       hideLatencyChart: false,
