@@ -63,32 +63,32 @@ const workerConfig: WorkerConfig = {
       timeout: 10000,
     },
     {
-      id: 'MOARA-Blog',
-      name: '主博客节点',
-      method: 'GET',
+      id: 'MOARA-Blog-Netlify',
+      name: '主博客节点 (Netlify)',
+      method: 'HEAD',
       target: 'https://blog.945426.xyz/',
       statusPageLink: 'https://blog.945426.xyz/',
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
       headers: {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-  }
+        'User-Agent': 'Uptimeflare',
+        'X-Uptime-Secret': 'moara-bypass-key'
+      }
     },
     {
-      id: 'MOARA-Blog',
-      name: '备用博客节点',
-      method: 'GET',
+      id: 'MOARA-Blog-Vercel',
+      name: '备用博客节点 (Vercel)',
+      method: 'HEAD',
       target: 'https://blog2.945426.xyz/',
       statusPageLink: 'https://blog2.945426.xyz/',
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
       headers: {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-  }
+        'User-Agent': 'Uptimeflare',
+        'X-Uptime-Secret': 'moara-bypass-key'
+      }
     },
     {
       id: 'cors',
