@@ -172,6 +172,7 @@ const workerConfig: WorkerConfig = {
   notification: {
     // [Optional] Notification webhook settings, if not specified, no notification will be sent
     // More info at Wiki: https://github.com/lyc8503/UptimeFlare/wiki/Setup-notification
+    /*
     webhook: {
       // [Required] webhook URL (example: Telegram Bot API)
       url: 'https://api.resend.com/emails',
@@ -199,6 +200,7 @@ const workerConfig: WorkerConfig = {
       // [Optional] timeout calling this webhook, in millisecond, default to 5000
       timeout: 10000,
     },
+    */
     // [Optional] timezone used in notification messages, default to "Etc/GMT"
     timeZone: 'Asia/Shanghai',
     // [Optional] grace period in minutes before sending a notification
