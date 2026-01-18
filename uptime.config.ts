@@ -54,6 +54,15 @@ const workerConfig: WorkerConfig = {
     //   //checkLocationWorkerRoute: 'https://xxx.example.com',
     // },
     {
+      id: 'status',
+      name: '本监控站点',
+      method: 'HEAD',
+      target: 'https://status.945426.xyz/',
+      hideLatencyChart: false,
+      expectedCodes: [200],
+      timeout: 10000,
+    },
+    {
       id: 'MOARA-Blog',
       name: '主博客节点',
       method: 'HEAD',
@@ -149,6 +158,15 @@ const workerConfig: WorkerConfig = {
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
+    },
+    {
+      id: 'test',
+      name: 'test',
+      method: 'HEAD',
+      target: 'https://worker.521116.xyz/',
+      hideLatencyChart: false,
+      expectedCodes: [200],
+      timeout: 10000,
     }
   ],
   notification: {
@@ -173,8 +191,8 @@ const workerConfig: WorkerConfig = {
       // [Required] payload to be sent
       // $MSG will be replaced with the human-readable notification message
       payload: {
-        "from": "系统状态更新 <uptimeflare@update.2x.nz>",
-        "to": ["acofork@foxmail.com"],
+        "from": "系统状态更新 <status@update.945426.xyz>",
+        "to": ["moara@foxmail.com"],
         "subject": "UptimeFlare 状态更新",
         "text": "$MSG"
       },
@@ -205,7 +223,6 @@ const workerConfig: WorkerConfig = {
       
       // 调用 Resend API 发送邮件通知 (高级 HTML 格式)
       // 务必在 Cloudflare Worker 的设置 -> 变量中配置: RESEND_API_KEY
-      /* 
       if (env.RESEND_API_KEY) {
         try {
           const statusText = isUp ? '恢复正常 (UP)' : '服务中断 (DOWN)';
@@ -230,8 +247,8 @@ const workerConfig: WorkerConfig = {
           `;
 
           const resendPayload = {
-            from: "系统状态更新 <uptimeflare@update.2x.nz>",
-            to: ["acofork@foxmail.com"],
+            from: "系统状态更新 <status@update.945426.xyz>",
+            to: ["moara@foxmail.com"],
             subject: subject,
             html: htmlContent,
           };
@@ -252,7 +269,6 @@ const workerConfig: WorkerConfig = {
           console.error(`Error calling Resend API: ${e}`);
         }
       }
-      */
       
       // 这不会遵循宽限期设置，并且在状态变化时立即调用
       // 如果您想实现宽限期，需要手动处理
