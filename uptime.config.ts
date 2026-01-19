@@ -215,7 +215,7 @@ const workerConfig: WorkerConfig = {
     //gracePeriod: 5,
   },
   callbacks: {
-    onStatusChange: async (
+     onStatusChange: async (
       env: any,
       monitor: any,
       isUp: boolean,
@@ -237,7 +237,7 @@ const workerConfig: WorkerConfig = {
           const neoYellow = '#facc15';
           const accentColor = isUp ? neoGreen : neoPink;
           
-          const subject = `[${statusTitle}] ${monitor.name} 状态变更通知`;
+          const subject = `[${statusTitle}] ${monitor.name} 站点状态变更`;
           
           // 格式化时间
           let timeString = new Date(timeNow * 1000).toISOString();
@@ -245,8 +245,20 @@ const workerConfig: WorkerConfig = {
             timeString = new Date(timeNow * 1000).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
           } catch (e) { }
 
+          // --- 新增逻辑：尝试从 reason 中提取状态码 ---
+          // 默认情况：正常是200，错误默认500
+          let bigStatusCode = isUp ? '200' : '500'; 
+          
+          if (!isUp) {
+            // 正则匹配 "Got: 530" 或 "status: 404" 等数字
+            const codeMatch = reason.match(/Got:\s*(\d+)/i) || reason.match(/status:\s*(\d+)/i);
+            if (codeMatch && codeMatch[1]) {
+              bigStatusCode = codeMatch[1];
+            }
+          }
+          // ------------------------------------------
+
           // 构建 Neo-Brutalism 风格的 HTML
-          // 注意：邮件客户端对 CSS 支持有限，必须使用内联样式，且尽量避免高级 CSS 属性
           const htmlContent = `
             <!DOCTYPE html>
             <html>
@@ -271,9 +283,9 @@ const workerConfig: WorkerConfig = {
                     ${isUp ? '✔' : '!'}
                   </div>
 
-                  <!-- Big Status Title -->
+                  <!-- Big Status Title (Dynamic Code) -->
                   <h1 style="font-family: sans-serif; font-size: 48px; font-weight: 900; margin: 0; line-height: 1; letter-spacing: -2px; text-transform: uppercase;">
-                    ${isUp ? '200' : '500'}
+                    ${bigStatusCode}
                   </h1>
                   
                   <!-- Tag -->
@@ -286,11 +298,11 @@ const workerConfig: WorkerConfig = {
                     <p style="margin: 5px 0;">> 目标: <strong>${monitor.name}</strong></p>
                     <p style="margin: 5px 0;">> 状态: <span style="color: ${isUp ? '#15803d' : '#be185d'}; font-weight: bold;">${statusText}</span></p>
                     <p style="margin: 5px 0;">> 时间: ${timeString}</p>
-                    <p style="margin: 5px 0;">> 原因: ${reason}</p>
+                    <p style="margin: 5px 0; word-break: break-all;">> 原因: ${reason}</p>
                   </div>
 
                   <!-- Action Button -->
-                  <a href="${monitor.url || '#'}" style="display: block; text-decoration: none; background-color: ${accentColor}; color: #000000; border: 2px solid #000000; padding: 12px; font-weight: 800; font-family: sans-serif; text-transform: uppercase; box-shadow: 4px 4px 0px 0px #000000;">
+                  <a href="https://status.945426.xyz/" style="display: block; text-decoration: none; background-color: ${accentColor}; color: #000000; border: 2px solid #000000; padding: 12px; font-weight: 800; font-family: sans-serif; text-transform: uppercase; box-shadow: 4px 4px 0px 0px #000000;">
                     查看监控详情
                   </a>
 
@@ -298,8 +310,7 @@ const workerConfig: WorkerConfig = {
 
                 <!-- Footer Strip -->
                 <div style="border-top: 2px solid #000000; background-color: #f9fafb; padding: 8px 15px; font-family: monospace; font-size: 10px; font-weight: bold; color: #6b7280; display: flex; justify-content: space-between;">
-                  <span style="float: left;">MOARA SYSTEM</span>
-                  <span style="float: right;">UPTIME_FLARE</span>
+                  <span style="float: left;">Uptimeflare</span>
                   <div style="clear: both;"></div>
                 </div>
 
