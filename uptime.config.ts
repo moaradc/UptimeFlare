@@ -1,17 +1,17 @@
-// This is a simplified example config file for quickstart
-// Some not frequently used features are omitted/commented out here
-// For a full-featured example, please refer to `uptime.config.full.ts`
+// 这是一个用于快速入门的简化示例配置文件
+// 一些不常用的功能在此处被省略/注释掉了
+// 如需查看完整功能的示例，请参考 uptime.config.full.ts
 
-// Don't edit this line
+// 请勿编辑此行
 import { MaintenanceConfig, PageConfig, WorkerConfig } from './types/config'
 
 const pageConfig: PageConfig = {
-  // Title for your status page
+  // 状态页标题
   title: "MOARA 的状态页",
-  // Links shown at the header of your status page, could set `highlight` to `true`
+  // 显示在状态页顶部的链接，可将 highlight 设为 true
   links: [
+    { link: 'https://blog.945426.xyz/', label: '博客', highlight: true },
     { link: 'mailto:moara@foxmail.com', label: '邮箱', highlight: true },
-    { link: 'https://blog.945426.xyz/', label: '博客' },
   ],
 }
 
@@ -94,10 +94,11 @@ const workerConfig: WorkerConfig = {
     {
       id: 'cors',
       name: 'CORS API 中转代理服务 ',
-      method: 'HEAD',
-      target: 'https://cors.945426.xyz/',
+      method: 'GET',
+      target: 'https://cors.945426.xyz/health',
       statusPageLink: 'https://cors.945426.xyz/',
       checkProxy: 'worker://apac',
+      responseKeyword: 'ok',
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
@@ -137,12 +138,11 @@ const workerConfig: WorkerConfig = {
     {
       id: 'pansou',
       name: '盘搜（ClawCloud）',
-      tooltip: '基于 ClawCloud 日本节点部署的网盘搜索引擎',
       method: 'GET',
       target: 'https://ps.945426.xyz/api/health',
       statusPageLink: 'https://ps.945426.xyz/',
       checkProxy: 'worker://apac',
-      responseKeyword: 'skk',
+      responseKeyword: 'ok',
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
@@ -190,42 +190,42 @@ const workerConfig: WorkerConfig = {
     }
   ],
   notification: {
-    // [Optional] Notification webhook settings, if not specified, no notification will be sent
-    // More info at Wiki: https://github.com/lyc8503/UptimeFlare/wiki/Setup-notification
+    // [可选] 通知 webhook 设置，若未指定则不会发送通知
+    // 更多信息请查阅Wiki：https://github.com/lyc8503/UptimeFlare/wiki/Setup-notification
     /*
     webhook: {
-      // [Required] webhook URL (example: Telegram Bot API)
+      // [必填] webhook URL（示例：resend API）
       url: 'https://api.resend.com/emails',
-      // [Optional] HTTP method, default to 'GET' for payloadType=param, 'POST' otherwise
+      // [可选] HTTP 方法，当 payloadType=param 时默认为 'GET'，其他情况下默认为 'POST'
       method: 'POST',
-      // [Optional] headers to be sent
+      // [可选] 需要发送的请求头
       headers: {
          'Authorization': 'Bearer ${env.RESEND_API_KEY}',
          'Content-Type': 'application/json'
       },
-      // [Required] Specify how to encode the payload
-      // Should be one of 'param', 'json' or 'x-www-form-urlencoded'
-      // 'param': append url-encoded payload to URL search parameters
-      // 'json': POST json payload as body, set content-type header to 'application/json'
-      // 'x-www-form-urlencoded': POST url-encoded payload as body, set content-type header to 'x-www-form-urlencoded'
+      // [必填] 指定负载数据的编码方式
+      // 应为以下选项之一：'param'、'json' 或 'x-www-form-urlencoded'
+      // 'param'：将 URL 编码后的负载数据附加到 URL 查询参数中
+      // 'json'：以 JSON 格式将负载数据作为请求体 POST 发送，并设置 content-type 请求头为 'application/json'
+      // 'x-www-form-urlencoded'：以 URL 编码格式将负载数据作为请求体 POST 发送，并设置 content-type 请求头为 'x-www-form-urlencoded'
       payloadType: 'json',
-      // [Required] payload to be sent
-      // $MSG will be replaced with the human-readable notification message
+      // [必填] 需要发送的负载数据
+      // $MSG 将被替换为人类可读的通知消息
       payload: {
         "from": "系统状态更新 <status@update.945426.xyz>",
         "to": ["moara@foxmail.com"],
         "subject": "UptimeFlare 状态更新",
         "text": "$MSG"
       },
-      // [Optional] timeout calling this webhook, in millisecond, default to 5000
+      // [可选] 调用此 webhook 的超时时间，单位为毫秒，默认为 5000
       timeout: 10000,
     },
     */
-    // [Optional] timezone used in notification messages, default to "Etc/GMT"
+    // [可选] 通知消息中使用的时区，默认为 "Etc/GMT"
     timeZone: 'Asia/Shanghai',
-    // [Optional] grace period in minutes before sending a notification
-    // notification will be sent only if the monitor is down for N continuous checks after the initial failure
-    // if not specified, notification will be sent immediately
+    // [可选] 发送通知前的宽限期（单位：分钟）
+    // 只有当监控器在首次失败后，连续 N 次检查均失败时，才会发送通知
+    // 如未指定，通知将在首次失败后立即发送
     //gracePeriod: 5,
   },
   callbacks: {
@@ -239,7 +239,10 @@ const workerConfig: WorkerConfig = {
     ) => {
       // 当任何监控的状态发生变化时，将调用此回调
       // 在这里编写任何 Typescript 代码
-      // 调用 Resend API 发送邮件通知 (Neo-Brutalism 风格)
+      // 注意：已在 webhook 中配置了 Resend 基础通知
+      // 如果需要发送 HTML 邮件，请保留以下代码；如果只需简单文本通知，可以注释掉以下代码以避免重复通知。      
+      // 调用 Resend API 发送邮件通知 (高级 HTML 格式)
+      // 务必在 Cloudflare Worker 的设置 -> 变量中配置: RESEND_API_KEY
       if (env.RESEND_API_KEY) {
         try {
           const statusText = isUp ? '恢复正常 (UP)' : '服务中断 (DOWN)';
@@ -248,13 +251,13 @@ const workerConfig: WorkerConfig = {
           const neoPink = '#f472b6';
           const neoYellow = '#facc15';
           const accentColor = isUp ? neoGreen : neoPink;
-          const subject = `[${statusText}] ${monitor.name} 站点状态变更通知`;
+          const subject = `${statusText} 「${monitor.name}」 站点状态变更通知`;
           
           let timeString = new Date(timeNow * 1000).toISOString();
           try {
             timeString = new Date(timeNow * 1000).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
           } catch (e) { }
-          let bigStatusCode = isUp ? '200' : '503'; 
+          let bigStatusCode = isUp ? '200' : '500'; 
 
           if (!isUp) {
             const codeMatch = reason.match(/Got:\s*(\d+)/i) || reason.match(/status:\s*(\d+)/i);
@@ -347,6 +350,8 @@ const workerConfig: WorkerConfig = {
         }
       }
       
+      // 这不会遵循宽限期设置，并且在状态变化时立即调用
+      // 如果您想实现宽限期，需要手动处理      
     },
     onIncident: async (
       env: any,
@@ -363,10 +368,10 @@ const workerConfig: WorkerConfig = {
   },
 }
 
-// You can define multiple maintenances here
-// During maintenance, an alert will be shown at status page
-// Also, related downtime notifications will be skipped (if any)
-// Of course, you can leave it empty if you don't need this feature
+// 您可以在此定义多个维护窗口
+// 维护期间，状态页将显示告警提示
+// 同时，相关的宕机通知将被跳过（如果配置了通知）
+// 当然，如果不需要此功能，也可以保持留空
 
 const maintenances: MaintenanceConfig[] = []
 
@@ -388,5 +393,5 @@ const maintenances: MaintenanceConfig[] = []
 //   },
 // ]
 
-// Don't edit this line
+// 请勿编辑此行
 export { maintenances, pageConfig, workerConfig }
