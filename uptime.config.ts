@@ -98,7 +98,7 @@ const workerConfig: WorkerConfig = {
       target: 'https://cors.945426.xyz/health',
       statusPageLink: 'https://cors.945426.xyz/',
       checkProxy: 'worker://apac',
-      responseKeyword: 'ok',
+      responseKeyword: 'OK',
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
