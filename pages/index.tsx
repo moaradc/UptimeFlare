@@ -1,5 +1,4 @@
 import Head from 'next/head'
-
 import { Inter } from 'next/font/google'
 import { MonitorTarget } from '@/types/config'
 import { maintenances, pageConfig, workerConfig } from '@/uptime.config'
@@ -11,6 +10,8 @@ import MonitorDetail from '@/components/MonitorDetail'
 import Footer from '@/components/Footer'
 import { useTranslation } from 'react-i18next'
 import { CompactedMonitorStateWrapper, getFromStore } from '@/worker/src/store'
+import { useRouter } from 'next/router' // 引入 router
+import { useEffect } from 'react' // 引入 useEffect
 
 export const runtime = 'experimental-edge'
 const inter = Inter({ subsets: ['latin'] })
@@ -25,10 +26,25 @@ export default function Home({
   statusPageLink?: string
 }) {
   const { t } = useTranslation('common')
+  const router = useRouter()
+  
+  // --- 静默刷新逻辑 ---
+  useEffect(() => {
+    // 设置刷新间隔，例如 60 秒
+    const interval = setInterval(() => {
+      // 使用 replace 重新加载当前路径，scroll: false 防止页面跳动
+      router.replace(router.asPath, undefined, { scroll: false })
+    }, 60 * 1000)
+
+    return () => clearInterval(interval)
+  }, [router])
+  // ------------------
+
   let state = new CompactedMonitorStateWrapper(compactedStateStr).uncompact()
 
   // Specify monitorId in URL hash to view a specific monitor (can be used in iframe)
-  const monitorId = window.location.hash.substring(1)
+  const monitorId = typeof window !== 'undefined' ? window.location.hash.substring(1) : ''
+  
   if (monitorId) {
     const monitor = monitors.find((monitor) => monitor.id === monitorId)
     if (!monitor || !state) {
