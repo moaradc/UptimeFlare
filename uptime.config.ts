@@ -225,33 +225,87 @@ const workerConfig: WorkerConfig = {
     ) => {
       // 当任何监控的状态发生变化时，将调用此回调
       // 在这里编写任何 Typescript 代码
-
-      // 注意：已在 webhook 中配置了 Resend 基础通知
-      // 如果需要发送 HTML 邮件，请保留以下代码；如果只需简单文本通知，可以注释掉以下代码以避免重复通知。
-      
-      // 调用 Resend API 发送邮件通知 (高级 HTML 格式)
-      // 务必在 Cloudflare Worker 的设置 -> 变量中配置: RESEND_API_KEY
+      // 调用 Resend API 发送邮件通知 (Neo-Brutalism 风格)
       if (env.RESEND_API_KEY) {
         try {
           const statusText = isUp ? '恢复正常 (UP)' : '服务中断 (DOWN)';
-          const color = isUp ? '#4ade80' : '#ef4444'; // green-400 : red-500
-          const subject = `[${statusText}] ${monitor.name} 状态变更通知`;
+          const statusTitle = isUp ? 'ONLINE' : 'OFFLINE';
           
-          // 尝试格式化时间
+          // 提取 403.html 中的配色方案
+          const neoGreen = '#a3e635'; // 恢复/正常
+          const neoPink = '#f472b6';  // 错误/中断
+          const neoYellow = '#facc15';
+          const accentColor = isUp ? neoGreen : neoPink;
+          
+          const subject = `[${statusTitle}] ${monitor.name} 状态变更通知`;
+          
+          // 格式化时间
           let timeString = new Date(timeNow * 1000).toISOString();
           try {
             timeString = new Date(timeNow * 1000).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
           } catch (e) { }
 
+          // 构建 Neo-Brutalism 风格的 HTML
+          // 注意：邮件客户端对 CSS 支持有限，必须使用内联样式，且尽量避免高级 CSS 属性
           const htmlContent = `
-            <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 5px;">
-              <h2 style="color: ${color};">${statusText}</h2>
-              <p><strong>监控名称:</strong> ${monitor.name}</p>
-              <p><strong>时间:</strong> ${timeString}</p>
-              <p><strong>原因:</strong> ${reason}</p>
-              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-              <p style="font-size: 12px; color: #888;">来自 UptimeFlare 监控报警</p>
-            </div>
+            <!DOCTYPE html>
+            <html>
+            <body style="margin: 0; padding: 20px; background-color: #f0f0f0; font-family: 'Courier New', Courier, monospace; color: #000000;">
+              
+              <!-- Main Container -->
+              <div style="max-width: 500px; margin: 0 auto; background-color: #ffffff; border: 2px solid #000000; box-shadow: 6px 6px 0px 0px #000000;">
+                
+                <!-- Window Header (Traffic Lights) -->
+                <div style="background-color: #000000; padding: 10px 15px; border-bottom: 2px solid #000000; display: flex; align-items: center;">
+                  <span style="display: inline-block; width: 10px; height: 10px; background-color: #ef4444; border-radius: 50%; border: 1px solid #ffffff; margin-right: 6px;"></span>
+                  <span style="display: inline-block; width: 10px; height: 10px; background-color: #eab308; border-radius: 50%; border: 1px solid #ffffff; margin-right: 6px;"></span>
+                  <span style="display: inline-block; width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; border: 1px solid #ffffff; margin-right: 15px;"></span>
+                  <span style="color: #ffffff; font-family: monospace; font-size: 12px; letter-spacing: 1px; font-weight: bold;">MONITOR_LOG.EXE</span>
+                </div>
+
+                <!-- Content Area -->
+                <div style="padding: 30px 20px; text-align: center;">
+                  
+                  <!-- Icon Circle -->
+                  <div style="width: 60px; height: 60px; margin: 0 auto 20px auto; background-color: ${accentColor}; border: 2px solid #000000; border-radius: 50%; text-align: center; line-height: 60px; font-size: 30px; font-weight: bold;">
+                    ${isUp ? '✔' : '!'}
+                  </div>
+
+                  <!-- Big Status Title -->
+                  <h1 style="font-family: sans-serif; font-size: 48px; font-weight: 900; margin: 0; line-height: 1; letter-spacing: -2px; text-transform: uppercase;">
+                    ${isUp ? '200' : '500'}
+                  </h1>
+                  
+                  <!-- Tag -->
+                  <div style="display: inline-block; background-color: #000000; color: ${isUp ? neoGreen : neoYellow}; padding: 4px 12px; font-family: monospace; font-weight: bold; font-size: 14px; transform: rotate(-2deg); margin: 10px 0 30px 0;">
+                    ${statusTitle}
+                  </div>
+
+                  <!-- Terminal Box -->
+                  <div style="background-color: #f3f4f6; border: 2px dashed #d1d5db; padding: 15px; text-align: left; font-family: monospace; font-size: 12px; margin-bottom: 25px;">
+                    <p style="margin: 5px 0;">> 目标: <strong>${monitor.name}</strong></p>
+                    <p style="margin: 5px 0;">> 状态: <span style="color: ${isUp ? '#15803d' : '#be185d'}; font-weight: bold;">${statusText}</span></p>
+                    <p style="margin: 5px 0;">> 时间: ${timeString}</p>
+                    <p style="margin: 5px 0;">> 原因: ${reason}</p>
+                  </div>
+
+                  <!-- Action Button -->
+                  <a href="${monitor.url || '#'}" style="display: block; text-decoration: none; background-color: ${accentColor}; color: #000000; border: 2px solid #000000; padding: 12px; font-weight: 800; font-family: sans-serif; text-transform: uppercase; box-shadow: 4px 4px 0px 0px #000000;">
+                    查看监控详情
+                  </a>
+
+                </div>
+
+                <!-- Footer Strip -->
+                <div style="border-top: 2px solid #000000; background-color: #f9fafb; padding: 8px 15px; font-family: monospace; font-size: 10px; font-weight: bold; color: #6b7280; display: flex; justify-content: space-between;">
+                  <span style="float: left;">MOARA SYSTEM</span>
+                  <span style="float: right;">UPTIME_FLARE</span>
+                  <div style="clear: both;"></div>
+                </div>
+
+              </div>
+            </body>
+            </html>
           `;
 
           const resendPayload = {
@@ -278,8 +332,6 @@ const workerConfig: WorkerConfig = {
         }
       }
       
-      // 这不会遵循宽限期设置，并且在状态变化时立即调用
-      // 如果您想实现宽限期，需要手动处理
     },
     onIncident: async (
       env: any,
