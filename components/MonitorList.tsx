@@ -1,5 +1,5 @@
 import { MonitorState, MonitorTarget } from '@/types/config'
-import { Accordion, Card, Center, Text } from '@mantine/core'
+import { Accordion, Card, Center, Text, Grid } from '@mantine/core' // 引入 Grid 用于布局优化
 import MonitorDetail from './MonitorDetail'
 import { pageConfig } from '@/uptime.config'
 import { useEffect, useState } from 'react'
@@ -11,7 +11,6 @@ function countDownCount(state: MonitorState, ids: string[]) {
     if (state.incident[id] === undefined || state.incident[id].length === 0) {
       continue
     }
-
     if (state.incident[id].slice(-1)[0].end === undefined) {
       downCount++
     }
@@ -42,7 +41,6 @@ export default function MonitorList({
   const groupedMonitor = group && Object.keys(group).length > 0
   let content
 
-  // Load expanded groups from localStorage
   const savedExpandedGroups = localStorage.getItem('expandedGroups')
   const expandedInitial = savedExpandedGroups
     ? JSON.parse(savedExpandedGroups)
@@ -53,7 +51,7 @@ export default function MonitorList({
   }, [expandedGroups])
 
   if (groupedMonitor) {
-    // Grouped monitors
+    // 分组模式保持 Accordion，但可以优化内部样式
     content = (
       <Accordion
         multiple
@@ -61,6 +59,7 @@ export default function MonitorList({
         variant="contained"
         value={expandedGroups}
         onChange={(values) => setExpandedGroups(values)}
+        styles={{ item: { marginBottom: '1rem', border: '1px solid #eee' } }} // 增加间距
       >
         {Object.keys(group).map((groupName) => (
           <Accordion.Item key={groupName} value={groupName}>
@@ -73,7 +72,7 @@ export default function MonitorList({
                   alignItems: 'center',
                 }}
               >
-                <div>{groupName}</div>
+                <Text fw={700}>{groupName}</Text>
                 <Text
                   fw={500}
                   style={{
@@ -92,11 +91,9 @@ export default function MonitorList({
                 .filter((monitor) => group[groupName].includes(monitor.id))
                 .sort((a, b) => group[groupName].indexOf(a.id) - group[groupName].indexOf(b.id))
                 .map((monitor) => (
-                  <div key={monitor.id}>
-                    <Card.Section ml="xs" mr="xs">
-                      <MonitorDetail monitor={monitor} state={state} />
-                    </Card.Section>
-                  </div>
+                  <Card key={monitor.id} shadow="sm" padding="lg" radius="md" withBorder mb="sm">
+                     <MonitorDetail monitor={monitor} state={state} />
+                  </Card>
                 ))}
             </Accordion.Panel>
           </Accordion.Item>
@@ -104,30 +101,27 @@ export default function MonitorList({
       </Accordion>
     )
   } else {
-    // Ungrouped monitors
+    // 未分组模式：每个监控一个独立卡片
     content = monitors.map((monitor) => (
-      <div key={monitor.id}>
-        <Card.Section ml="xs" mr="xs">
-          <MonitorDetail monitor={monitor} state={state} />
-        </Card.Section>
-      </div>
+      <Card 
+        key={monitor.id} 
+        shadow="sm" 
+        padding="lg" 
+        radius="md" 
+        withBorder 
+        mb="md" // 卡片之间的下边距
+        style={{ transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }} // 可选：添加悬停浮动效果
+      >
+        <MonitorDetail monitor={monitor} state={state} />
+      </Card>
     ))
   }
 
   return (
     <Center>
-      <Card
-        shadow="sm"
-        padding="lg"
-        radius="md"
-        ml="md"
-        mr="md"
-        mt="xl"
-        withBorder={!groupedMonitor}
-        style={{ width: groupedMonitor ? '897px' : '865px' }}
-      >
+      <div style={{ width: '100%', maxWidth: '900px', padding: '0 16px' }}>
         {content}
-      </Card>
+      </div>
     </Center>
   )
 }
