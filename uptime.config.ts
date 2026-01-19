@@ -310,14 +310,14 @@ const workerConfig: WorkerConfig = {
 
                   <!-- Action Button -->
                   <a href="https://status.945426.xyz/" style="display: block; text-decoration: none; background-color: ${accentColor}; color: #000000; border: 2px solid #000000; padding: 12px; font-weight: 800; font-family: sans-serif; text-transform: uppercase; box-shadow: 4px 4px 0px 0px #000000;">
-                    访问状态
+                    访问状态页
                   </a>
 
                 </div>
 
                 <!-- Footer Strip -->
                 <div style="border-top: 2px solid #000000; background-color: #f9fafb; padding: 8px 15px; font-family: monospace; font-size: 10px; font-weight: bold; color: #6b7280; display: flex; justify-content: space-between;">
-                  <span style="float: left;">Uptimeflare</span>
+                  <span style="float: left;">该邮件由 Resend 自动发送，请勿回复</span>
                   <div style="clear: both;"></div>
                 </div>
 
