@@ -1,17 +1,12 @@
-// 这是一个用于快速入门的简化示例配置文件
-// 一些不常用的功能在此处被省略/注释掉了
-// 如需查看完整功能的示例，请参考 uptime.config.full.ts
-
 // 请勿编辑此行
 import { MaintenanceConfig, PageConfig, WorkerConfig } from './types/config'
 
 const pageConfig: PageConfig = {
   // 状态页标题
-  title: "MOARA 的状态页",
+  title: "MOARA的状态页",
   // 显示在状态页顶部的链接，可将 highlight 设为 true
   links: [
     { link: 'https://blog.945426.xyz/', label: '博客', highlight: true },
-    { link: 'mailto:moara@foxmail.com', label: '邮箱', highlight: true },
   ],
 }
 
@@ -68,6 +63,7 @@ const workerConfig: WorkerConfig = {
       name: '主博客节点 (Netlify)',
       method: 'HEAD',
       target: 'https://blog.945426.xyz/favicon.jpg',
+      tooltip: 'Netlify',
       statusPageLink: 'https://blog.945426.xyz/',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
@@ -82,6 +78,7 @@ const workerConfig: WorkerConfig = {
       name: '备用博客节点 (Vercel)',
       method: 'HEAD',
       target: 'https://blog2.945426.xyz/favicon.jpg',
+      tooltip: 'Vercel',
       statusPageLink: 'https://blog2.945426.xyz/',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
@@ -119,6 +116,7 @@ const workerConfig: WorkerConfig = {
       name: 'LDDC API（zeabur节点）',
       method: 'HEAD',
       target: 'https://lddc.945426.xyz/',
+      tooltip: 'zeabur节点',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
       expectedCodes: [200],
@@ -129,6 +127,7 @@ const workerConfig: WorkerConfig = {
       name: 'LDDC API（leapcell节点）',
       method: 'HEAD',
       target: 'https://lddc.945426.xyz/',
+      tooltip: 'leapcell节点',
       statusPageLink: 'https://lddc.945426.xyz/',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
@@ -140,6 +139,7 @@ const workerConfig: WorkerConfig = {
       name: '盘搜（ClawCloud）',
       method: 'GET',
       target: 'https://ps.945426.xyz/api/health',
+      tooltip: 'ClawCloud',
       statusPageLink: 'https://ps.945426.xyz/',
       checkProxy: 'worker://apac',
       responseKeyword: 'ok',
@@ -152,6 +152,7 @@ const workerConfig: WorkerConfig = {
       name: 'Cloudreve （zeabur）',
       method: 'GET',
       target: 'https://pan.945426.xyz/',
+      tooltip: 'zeabur',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
       expectedCodes: [200],
@@ -162,6 +163,7 @@ const workerConfig: WorkerConfig = {
       name: 'LunaTV（zeabur）',
       method: 'HEAD',
       target: 'https://tv.945426.xyz/',
+      tooltip: 'zeabur',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
       expectedCodes: [200],
@@ -172,6 +174,7 @@ const workerConfig: WorkerConfig = {
       name: 'Waline 评论系统',
       method: 'HEAD',
       target: 'https://waline.945426.xyz/',
+      tooltip: 'Vercel',
       statusPageLink: 'https://waline.945426.xyz/',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
@@ -183,51 +186,13 @@ const workerConfig: WorkerConfig = {
       name: 'test',
       method: 'HEAD',
       target: 'https://worker.521116.xyz/',
+      tooltip: 'test',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
     }
   ],
-  notification: {
-    // [可选] 通知 webhook 设置，若未指定则不会发送通知
-    // 更多信息请查阅Wiki：https://github.com/lyc8503/UptimeFlare/wiki/Setup-notification
-    /*
-    webhook: {
-      // [必填] webhook URL（示例：resend API）
-      url: 'https://api.resend.com/emails',
-      // [可选] HTTP 方法，当 payloadType=param 时默认为 'GET'，其他情况下默认为 'POST'
-      method: 'POST',
-      // [可选] 需要发送的请求头
-      headers: {
-         'Authorization': 'Bearer ${env.RESEND_API_KEY}',
-         'Content-Type': 'application/json'
-      },
-      // [必填] 指定负载数据的编码方式
-      // 应为以下选项之一：'param'、'json' 或 'x-www-form-urlencoded'
-      // 'param'：将 URL 编码后的负载数据附加到 URL 查询参数中
-      // 'json'：以 JSON 格式将负载数据作为请求体 POST 发送，并设置 content-type 请求头为 'application/json'
-      // 'x-www-form-urlencoded'：以 URL 编码格式将负载数据作为请求体 POST 发送，并设置 content-type 请求头为 'x-www-form-urlencoded'
-      payloadType: 'json',
-      // [必填] 需要发送的负载数据
-      // $MSG 将被替换为人类可读的通知消息
-      payload: {
-        "from": "系统状态更新 <status@update.945426.xyz>",
-        "to": ["moara@foxmail.com"],
-        "subject": "UptimeFlare 状态更新",
-        "text": "$MSG"
-      },
-      // [可选] 调用此 webhook 的超时时间，单位为毫秒，默认为 5000
-      timeout: 10000,
-    },
-    */
-    // [可选] 通知消息中使用的时区，默认为 "Etc/GMT"
-    timeZone: 'Asia/Shanghai',
-    // [可选] 发送通知前的宽限期（单位：分钟）
-    // 只有当监控器在首次失败后，连续 N 次检查均失败时，才会发送通知
-    // 如未指定，通知将在首次失败后立即发送
-    //gracePeriod: 5,
-  },
   callbacks: {
      onStatusChange: async (
       env: any,
@@ -240,7 +205,6 @@ const workerConfig: WorkerConfig = {
       // 当任何监控的状态发生变化时，将调用此回调
       // 在这里编写任何 Typescript 代码
       // 注意：已在 webhook 中配置了 Resend 基础通知
-      // 如果需要发送 HTML 邮件，请保留以下代码；如果只需简单文本通知，可以注释掉以下代码以避免重复通知。      
       // 调用 Resend API 发送邮件通知 (高级 HTML 格式)
       // 务必在 Cloudflare Worker 的设置 -> 变量中配置: RESEND_API_KEY
       if (env.RESEND_API_KEY) {
@@ -377,18 +341,18 @@ const maintenances: MaintenanceConfig[] = []
 
 // const maintenances: MaintenanceConfig[] = [
 //   {
-    // // [Optional] Monitor IDs to be affected by this maintenance
+    // [可选] 受此维护影响的监控器ID
     // monitors: ['foo_monitor', 'bar_monitor'],
-    // // [Optional] default to "Scheduled Maintenance" if not specified
+    // [可选] 若未指定则默认为"计划维护"
     // title: 'Test Maintenance',
-    // // Description of the maintenance, will be shown at status page
-    // body: 'This is a test maintenance, server software upgrade',
-    // // Start time of the maintenance, in UNIX timestamp or ISO 8601 format
+    // 维护相关说明会显示在状态页面上。
+    // body: '这是一次测试维护，进行服务器软件升级',
+    // 维护开始时间，使用 UNIX 时间戳或 ISO 8601 格式
     // start: '2020-01-01T00:00:00+08:00',
-    // // [Optional] end time of the maintenance, in UNIX timestamp or ISO 8601 format
-    // // if not specified, the maintenance will be considered as on-going
+    // [可选] 维护结束时间，使用 UNIX 时间戳或 ISO 8601 格式
+    // 若未指定，则视为持续维护中
     // end: '2050-01-01T00:00:00+08:00',
-    // // [Optional] color of the maintenance alert at status page, default to "yellow"
+    // [可选] 状态页面上维护提醒的颜色，默认为 "yellow"（黄色）
     // color: 'blue',
 //   },
 // ]
