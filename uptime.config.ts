@@ -130,9 +130,11 @@ const workerConfig: WorkerConfig = {
     {
       id: 'pansou',
       name: '盘搜（ClawCloud）',
-      method: 'HEAD',
-      target: 'https://ps.945426.xyz/',
+      tooltip: '基于 ClawCloud 日本节点部署的网盘搜索引擎',
+      method: 'GET',
+      target: 'https://ps.945426.xyz/api/health',
       statusPageLink: 'https://ps.945426.xyz/',
+      responseKeyword: 'ok',
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
@@ -230,35 +232,25 @@ const workerConfig: WorkerConfig = {
         try {
           const statusText = isUp ? '恢复正常 (UP)' : '服务中断 (DOWN)';
           const statusTitle = isUp ? 'ONLINE' : 'OFFLINE';
-          
-          // 提取 403.html 中的配色方案
-          const neoGreen = '#a3e635'; // 恢复/正常
-          const neoPink = '#f472b6';  // 错误/中断
+          const neoGreen = '#a3e635';
+          const neoPink = '#f472b6';
           const neoYellow = '#facc15';
           const accentColor = isUp ? neoGreen : neoPink;
+          const subject = `[${statusText}] ${monitor.name} 站点状态变更通知`;
           
-          const subject = `[${statusTitle}] ${monitor.name} 站点状态变更`;
-          
-          // 格式化时间
           let timeString = new Date(timeNow * 1000).toISOString();
           try {
             timeString = new Date(timeNow * 1000).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
           } catch (e) { }
+          let bigStatusCode = isUp ? '200' : '503'; 
 
-          // --- 新增逻辑：尝试从 reason 中提取状态码 ---
-          // 默认情况：正常是200，错误默认500
-          let bigStatusCode = isUp ? '200' : '500'; 
-          
           if (!isUp) {
-            // 正则匹配 "Got: 530" 或 "status: 404" 等数字
             const codeMatch = reason.match(/Got:\s*(\d+)/i) || reason.match(/status:\s*(\d+)/i);
             if (codeMatch && codeMatch[1]) {
               bigStatusCode = codeMatch[1];
             }
           }
-          // ------------------------------------------
-
-          // 构建 Neo-Brutalism 风格的 HTML
+          
           const htmlContent = `
             <!DOCTYPE html>
             <html>
@@ -295,15 +287,15 @@ const workerConfig: WorkerConfig = {
 
                   <!-- Terminal Box -->
                   <div style="background-color: #f3f4f6; border: 2px dashed #d1d5db; padding: 15px; text-align: left; font-family: monospace; font-size: 12px; margin-bottom: 25px;">
-                    <p style="margin: 5px 0;">> 目标: <strong>${monitor.name}</strong></p>
+                    <p style="margin: 5px 0;">> 名称: <strong>${monitor.name}</strong></p>
                     <p style="margin: 5px 0;">> 状态: <span style="color: ${isUp ? '#15803d' : '#be185d'}; font-weight: bold;">${statusText}</span></p>
                     <p style="margin: 5px 0;">> 时间: ${timeString}</p>
-                    <p style="margin: 5px 0; word-break: break-all;">> 原因: ${reason}</p>
+                    <p style="margin: 5px 0; word-break: break-all;">> 备注: ${reason}</p>
                   </div>
 
                   <!-- Action Button -->
                   <a href="https://status.945426.xyz/" style="display: block; text-decoration: none; background-color: ${accentColor}; color: #000000; border: 2px solid #000000; padding: 12px; font-weight: 800; font-family: sans-serif; text-transform: uppercase; box-shadow: 4px 4px 0px 0px #000000;">
-                    查看监控详情
+                    访问状态
                   </a>
 
                 </div>
