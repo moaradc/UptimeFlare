@@ -90,32 +90,50 @@ export default function MonitorDetail({
     </Text>
   )
 
+  // --- 可用率文本组件 (复用) ---
+  const uptimeTextElement = (
+    <Text fw={700} style={{ color: getColor(uptimePercent, true) }} size="sm">
+      {t('Overall', { percent: uptimePercent })}
+    </Text>
+  )
+
   return (
     <>
-      {/* 头部区域：名称、胶囊数据、展开按钮 */}
+      {/* 头部区域 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <Group gap="xs">
-          {monitor.tooltip ? (
-            <Tooltip label={monitor.tooltip}>{monitorNameElement}</Tooltip>
-          ) : (
-            monitorNameElement
-          )}
-          
-          {/* 延迟胶囊 */}
-          <Group gap={5} visibleFrom="xs">
-            <Badge variant="light" color="gray" size="sm" radius="sm" leftSection={<IconActivity size={10}/>}>
-              Avg: {avgLatency}ms
-            </Badge>
-            <Badge variant="light" color={maxLatency > 500 ? 'red' : 'gray'} size="sm" radius="sm">
-              Max: {maxLatency}ms
-            </Badge>
+        
+        {/* 左侧区域：包含名称、PC端胶囊、移动端可用率 */}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <Group gap="xs">
+            {monitor.tooltip ? (
+              <Tooltip label={monitor.tooltip}>{monitorNameElement}</Tooltip>
+            ) : (
+              monitorNameElement
+            )}
+            
+            {/* PC端显示的延迟胶囊 (xs以上显示) */}
+            <Group gap={5} visibleFrom="xs">
+              <Badge variant="light" color="gray" size="sm" radius="sm" leftSection={<IconActivity size={10}/>}>
+                Avg: {avgLatency}ms
+              </Badge>
+              <Badge variant="light" color={maxLatency > 500 ? 'red' : 'gray'} size="sm" radius="sm">
+                Max: {maxLatency}ms
+              </Badge>
+            </Group>
           </Group>
-        </Group>
 
+          {/* 移动端显示的可用率 (xs以下显示) - 放在名称下方 */}
+          <Box hiddenFrom="xs" mt={2}>
+            {uptimeTextElement}
+          </Box>
+        </div>
+
+        {/* 右侧区域：PC端可用率、折叠按钮 */}
         <Group gap="xs">
-          <Text fw={700} style={{ color: getColor(uptimePercent, true) }}>
-            {t('Overall', { percent: uptimePercent })}
-          </Text>
+          {/* PC端显示的可用率 (xs以上显示) */}
+          <Box visibleFrom="xs">
+            {uptimeTextElement}
+          </Box>
           
           {/* 展开/折叠按钮 */}
           {!monitor.hideLatencyChart && (
@@ -131,7 +149,7 @@ export default function MonitorDetail({
         </Group>
       </div>
 
-      {/* 移动端显示的延迟胶囊 (当屏幕窄时显示在这里) */}
+      {/* 移动端显示的延迟胶囊 (当屏幕窄时显示在这里，位于可用率下方) */}
       <Group gap={5} hiddenFrom="xs" mb="xs">
         <Badge variant="light" color="gray" size="sm" radius="sm" leftSection={<IconActivity size={10}/>}>
           Avg: {avgLatency}ms
