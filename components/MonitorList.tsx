@@ -1,5 +1,5 @@
 import { MonitorState, MonitorTarget } from '@/types/config'
-import { Accordion, Card, Center, Text, Grid } from '@mantine/core' // 引入 Grid 用于布局优化
+import { Accordion, Card, Center, Text } from '@mantine/core'
 import MonitorDetail from './MonitorDetail'
 import { pageConfig } from '@/uptime.config'
 import { useEffect, useState } from 'react'
@@ -51,7 +51,7 @@ export default function MonitorList({
   }, [expandedGroups])
 
   if (groupedMonitor) {
-    // 分组模式保持 Accordion，但可以优化内部样式
+    // 分组模式
     content = (
       <Accordion
         multiple
@@ -59,7 +59,7 @@ export default function MonitorList({
         variant="contained"
         value={expandedGroups}
         onChange={(values) => setExpandedGroups(values)}
-        styles={{ item: { marginBottom: '1rem', border: '1px solid #eee' } }} // 增加间距
+        styles={{ item: { marginBottom: '1rem', border: '1px solid #eee' } }}
       >
         {Object.keys(group).map((groupName) => (
           <Accordion.Item key={groupName} value={groupName}>
@@ -109,8 +109,8 @@ export default function MonitorList({
         padding="lg" 
         radius="md" 
         withBorder 
-        mb="md" // 卡片之间的下边距
-        style={{ transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }} // 可选：添加悬停浮动效果
+        mb="md" 
+        style={{ transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}
       >
         <MonitorDetail monitor={monitor} state={state} />
       </Card>
@@ -119,7 +119,7 @@ export default function MonitorList({
 
   return (
     <Center>
-      <div style={{ width: '100%', maxWidth: '900px', padding: '0 16px' }}>
+      <div style={{ width: '100%', maxWidth: '900px', padding: '0 16px', marginTop: '32px' }}>
         {content}
       </div>
     </Center>
