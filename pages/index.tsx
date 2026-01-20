@@ -1,4 +1,5 @@
 import Head from 'next/head'
+
 import { Inter } from 'next/font/google'
 import { MonitorTarget } from '@/types/config'
 import { maintenances, pageConfig, workerConfig } from '@/uptime.config'
@@ -41,14 +42,12 @@ export default function Home({
   const { t } = useTranslation('common')
   const router = useRouter()
   
-  // --- 静默刷新逻辑 ---
   useEffect(() => {
     const interval = setInterval(() => {
       router.replace(router.asPath, undefined, { scroll: false })
     }, 60 * 1000)
     return () => clearInterval(interval)
   }, [router])
-  // ------------------
 
   let state = new CompactedMonitorStateWrapper(compactedStateStr).uncompact()
 
