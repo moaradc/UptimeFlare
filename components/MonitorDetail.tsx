@@ -16,7 +16,6 @@ export default function MonitorDetail({
   state: MonitorState
 }) {
   const { t } = useTranslation('common')
-  // 控制详情展开的状态，默认折叠 (false)
   const [opened, setOpened] = useState(false)
 
   if (!state.latency[monitor.id])
@@ -90,14 +89,14 @@ export default function MonitorDetail({
     </Text>
   )
 
-  // --- 可用率文本组件 (复用) ---
+  // --- 可用率文本组件 ---
   const uptimeTextElement = (
     <Text fw={700} style={{ color: getColor(uptimePercent, true) }} size="sm">
       {t('Overall', { percent: uptimePercent })}
     </Text>
   )
 
-  // --- 延迟胶囊组件 (复用) ---
+  // --- 延迟胶囊组件 ---
   const badgesElement = (
     <>
       <Badge variant="light" color="gray" size="sm" radius="sm" leftSection={<IconActivity size={10}/>}>
@@ -112,9 +111,10 @@ export default function MonitorDetail({
   return (
     <>
       {/* 头部区域 */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+      {/* 修改点：alignItems 改为 'flex-start'，让右侧按钮始终与左侧第一行对齐 */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
         
-        {/* 左侧区域：包含名称、移动端可用率 */}
+        {/* 左侧区域 */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Group gap="xs">
             {monitor.tooltip ? (
@@ -124,21 +124,20 @@ export default function MonitorDetail({
             )}
           </Group>
 
-          {/* 移动端显示的可用率 (xs以下显示) - 放在名称下方 */}
+          {/* 移动端显示的可用率 */}
           <Box hiddenFrom="xs" mt={2}>
             {uptimeTextElement}
           </Box>
         </div>
 
-        {/* 右侧区域：PC端胶囊、PC端可用率、折叠按钮 */}
+        {/* 右侧区域 */}
         <Group gap="xs">
-          
-          {/* PC端显示的延迟胶囊 (xs以上显示) - 放在可用率左边 */}
+          {/* PC端显示的延迟胶囊 */}
           <Group gap={5} visibleFrom="xs">
             {badgesElement}
           </Group>
 
-          {/* PC端显示的可用率 (xs以上显示) */}
+          {/* PC端显示的可用率 */}
           <Box visibleFrom="xs">
             {uptimeTextElement}
           </Box>
@@ -157,15 +156,15 @@ export default function MonitorDetail({
         </Group>
       </div>
 
-      {/* 移动端显示的延迟胶囊 (当屏幕窄时显示在这里，位于可用率下方) */}
+      {/* 移动端显示的延迟胶囊 */}
       <Group gap={5} hiddenFrom="xs" mb="xs">
         {badgesElement}
       </Group>
 
-      {/* 状态条 (始终显示) */}
+      {/* 状态条 */}
       <DetailBar monitor={monitor} state={state} />
 
-      {/* 折叠区域：图表 */}
+      {/* 折叠区域 */}
       {!monitor.hideLatencyChart && (
         <Collapse in={opened}>
           <Box mt="md">
