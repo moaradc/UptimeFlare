@@ -12,10 +12,9 @@ import { useTranslation } from 'react-i18next'
 import { CompactedMonitorStateWrapper, getFromStore } from '@/worker/src/store'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import { GetServerSidePropsContext } from 'next'
 
-// --- 兼容性补丁 (Polyfill) 开始 ---
-// 修复 Via, UC, Bing, Baidu 等浏览器报错 TypeError: Uint8Array.fromHex is not a function
-// 使用 (Uint8Array as any) 绕过 TypeScript 类型检查
+// 兼容性补丁
 if (typeof Uint8Array !== 'undefined' && !(Uint8Array as any).fromHex) {
   (Uint8Array as any).fromHex = function (string: string) {
     if (string.length % 2 !== 0) {
@@ -28,7 +27,7 @@ if (typeof Uint8Array !== 'undefined' && !(Uint8Array as any).fromHex) {
     return bytes;
   };
 }
-// --- 兼容性补丁 结束 ---
+// 兼容性补丁结束
 
 export const runtime = 'experimental-edge'
 const inter = Inter({ subsets: ['latin'] })
@@ -44,17 +43,15 @@ export default function Home({
 }) {
   const { t } = useTranslation('common')
   const router = useRouter()
-  
-  // --- 静默刷新逻辑 ---
+
   useEffect(() => {
-    // 每 60 秒静默刷新一次数据
+    // 设置定时器，每 60 秒刷新一次
     const interval = setInterval(() => {
       router.replace(router.asPath, undefined, { scroll: false })
     }, 60 * 1000)
 
     return () => clearInterval(interval)
   }, [router])
-  // ------------------
 
   let state = new CompactedMonitorStateWrapper(compactedStateStr).uncompact()
 
@@ -100,7 +97,13 @@ export default function Home({
   )
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // 强制清除缓存逻辑
+  context.res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=0, max-age=0, no-store, no-cache, must-revalidate'
+  )
+
   // Read state as string from storage, to avoid hitting server-side cpu time limit
   const compactedStateStr = await getFromStore(process.env as any, 'state')
 
