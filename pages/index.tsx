@@ -11,7 +11,7 @@ import Footer from '@/components/Footer'
 import { useTranslation } from 'react-i18next'
 import { CompactedMonitorStateWrapper, getFromStore } from '@/worker/src/store'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react' // 引入 useRef
 import { GetServerSidePropsContext } from 'next'
 
 // 兼容性补丁
@@ -43,16 +43,27 @@ export default function Home({
 }) {
   const { t } = useTranslation('common')
   const router = useRouter()
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
+  // 静默刷新逻辑
   useEffect(() => {
-    // 设置定时器，每 60 秒刷新一次
-    const interval = setInterval(() => {
-      router.replace(router.asPath, undefined, { scroll: false })
-    }, 60 * 1000)
+    const refreshData = async () => {
+      try {
+        await router.replace(router.asPath, undefined, { scroll: false })
+      } catch (e) {
+        console.error("Silent refresh failed:", e)
+      } finally {
+        timerRef.current = setTimeout(refreshData, 60000)
+      }
+    }
 
-    return () => clearInterval(interval)
+    timerRef.current = setTimeout(refreshData, 60000)
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
   }, [router])
-
+ 
   let state = new CompactedMonitorStateWrapper(compactedStateStr).uncompact()
 
   // Specify monitorId in URL hash to view a specific monitor (can be used in iframe)
@@ -98,10 +109,9 @@ export default function Home({
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // 强制清除缓存逻辑
   context.res.setHeader(
     'Cache-Control',
-    'public, s-maxage=0, max-age=0, no-store, no-cache, must-revalidate'
+    'public, s-maxage=0, max-age=0, must-revalidate'
   )
 
   // Read state as string from storage, to avoid hitting server-side cpu time limit
