@@ -1,13 +1,12 @@
 import { Text, Tooltip, Badge, Group, ActionIcon, Collapse, Box } from '@mantine/core'
 import { MonitorState, MonitorTarget } from '@/types/config'
-import {
+import { 
   IconAlertCircle, 
   IconAlertTriangle, 
   IconCircleCheck, 
   IconChevronDown, 
   IconChevronUp, 
   IconActivity,
-  IconInfoCircle,
   IconExternalLink
 } from '@tabler/icons-react'
 import DetailChart from './DetailChart'
@@ -25,7 +24,6 @@ export default function MonitorDetail({
   state: MonitorState
 }) {
   const { t } = useTranslation('common')
-  // 控制详情展开的状态，默认折叠 (false)
   const [opened, setOpened] = useState(false)
 
   if (!state.latency[monitor.id])
@@ -40,6 +38,7 @@ export default function MonitorDetail({
       </>
     )
 
+  // 状态图标逻辑
   let statusIcon =
     state.incident[monitor.id].slice(-1)[0].end === undefined ? (
       <IconAlertCircle
@@ -79,45 +78,40 @@ export default function MonitorDetail({
     avgLatency = Math.round(latencyPoints.reduce((a, b) => a + b, 0) / latencyPoints.length)
   }
 
-  // 监控名称及图标区域渲染
-  const monitorNameElement = (
-    <Group gap={6} align="center" wrap="nowrap">
-      {/* 状态图标 + 名称 */}
-      <Text fw={700} size="lg" style={{ display: 'inline-flex', alignItems: 'center' }}>
-        {statusIcon} {monitor.name}
+  const nameContent = (
+    <span style={{ display: 'inline-flex', alignItems: 'center', cursor: monitor.tooltip ? 'pointer' : 'default' }}>
+      {statusIcon} 
+      <Text fw={700} size="lg" component="span" ml={2}>
+        {monitor.name}
       </Text>
-
-      {/* Tooltip 图标 */}
-      {monitor.tooltip && (
-        <Tooltip label={monitor.tooltip} withArrow>
-          <ActionIcon 
-            variant="subtle" 
-            color="gray" 
-            size="sm" 
-            aria-label="Info"
-            style={{ cursor: 'pointer' }}
-          >
-            <IconInfoCircle size={18} />
-          </ActionIcon>
-        </Tooltip>
-      )}
-
-      {/* 链接图标 */}
-      {monitor.statusPageLink && (
-        <ActionIcon
-          component="a"
-          href={monitor.statusPageLink}
-          target="_blank"
-          variant="subtle"
-          color="gray"
-          size="sm"
-          aria-label="Open Link"
-        >
-          <IconExternalLink size={18} />
-        </ActionIcon>
-      )}
-    </Group>
+    </span>
   )
+
+  const nameWithTooltip = monitor.tooltip ? (
+    <Tooltip 
+      label={monitor.tooltip} 
+      events={{ hover: true, focus: true, touch: true }}
+    >
+      {nameContent}
+    </Tooltip>
+  ) : (
+    nameContent
+  )
+
+  const linkIcon = monitor.statusPageLink ? (
+    <ActionIcon
+      component="a"
+      href={monitor.statusPageLink}
+      target="_blank"
+      variant="transparent"
+      size="sm"
+      color="gray"
+      aria-label="Open status page"
+      style={{ marginLeft: '4px', opacity: 0.6 }}
+    >
+      <IconExternalLink size={18} />
+    </ActionIcon>
+  ) : null
 
   // 可用率文本组件
   const uptimeTextElement = (
@@ -140,35 +134,28 @@ export default function MonitorDetail({
 
   return (
     <>
-      {/* 头部区域 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
         
-        {/* 左侧区域 */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {/* 直接渲染 monitorNameElement，不再需要外层 Tooltip 包裹 */}
-          <Group gap="xs">
-            {monitorNameElement}
+          <Group gap={0} align="center">
+            {nameWithTooltip}
+            {linkIcon}
           </Group>
 
-          {/* 移动端显示的可用率 */}
           <Box hiddenFrom="xs" mt={2}>
             {uptimeTextElement}
           </Box>
         </div>
 
-        {/* 右侧区域 */}
         <Group gap="xs">
-          {/* PC端显示的延迟胶囊 */}
           <Group gap={5} visibleFrom="xs">
             {badgesElement}
           </Group>
 
-          {/* PC端显示的可用率 */}
           <Box visibleFrom="xs">
             {uptimeTextElement}
           </Box>
           
-          {/* 展开/折叠按钮 */}
           {!monitor.hideLatencyChart && (
             <ActionIcon 
               variant="subtle" 
@@ -182,15 +169,12 @@ export default function MonitorDetail({
         </Group>
       </div>
 
-      {/* 移动端显示的延迟胶囊 */}
       <Group gap={5} hiddenFrom="xs" mb="xs">
         {badgesElement}
       </Group>
 
-      {/* 状态条 */}
       <DetailBar monitor={monitor} state={state} />
 
-      {/* 折叠区域 */}
       {!monitor.hideLatencyChart && (
         <Collapse in={opened}>
           <Box mt="md">
