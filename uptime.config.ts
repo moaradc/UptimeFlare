@@ -60,7 +60,7 @@ const workerConfig: WorkerConfig = {
     },
     {
       id: 'MOARA-Blog-Netlify',
-      name: '主博客节点 (Netlify)',
+      name: '主博客节点',
       method: 'HEAD',
       target: 'https://blog.945426.xyz/favicon.jpg',
       tooltip: 'Netlify',
@@ -75,7 +75,7 @@ const workerConfig: WorkerConfig = {
     },
     {
       id: 'MOARA-Blog-Vercel',
-      name: '备用博客节点 (Vercel)',
+      name: '备用博客节点',
       method: 'HEAD',
       target: 'https://blog2.945426.xyz/favicon.jpg',
       tooltip: 'Vercel',
@@ -113,7 +113,7 @@ const workerConfig: WorkerConfig = {
     },
     {
       id: 'lddc',
-      name: 'LDDC API（zeabur节点）',
+      name: 'LDDC API',
       method: 'HEAD',
       target: 'https://lddc.945426.xyz/',
       tooltip: 'zeabur节点',
@@ -124,11 +124,10 @@ const workerConfig: WorkerConfig = {
     },
     {
       id: 'lddc2',
-      name: 'LDDC API（leapcell节点）',
+      name: 'LDDC API',
       method: 'HEAD',
       target: 'https://lddc.945426.xyz/',
       tooltip: 'leapcell节点',
-      statusPageLink: 'https://lddc.945426.xyz/',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
       expectedCodes: [200],
@@ -136,7 +135,7 @@ const workerConfig: WorkerConfig = {
     },
     {
       id: 'pansou',
-      name: '盘搜（ClawCloud）',
+      name: '盘搜',
       method: 'GET',
       target: 'https://ps.945426.xyz/api/health',
       tooltip: 'ClawCloud',
@@ -149,7 +148,7 @@ const workerConfig: WorkerConfig = {
     },
     {
       id: 'pan',
-      name: 'Cloudreve （zeabur）',
+      name: 'Cloudreve',
       method: 'GET',
       target: 'https://pan.945426.xyz/',
       tooltip: 'zeabur',
@@ -160,7 +159,7 @@ const workerConfig: WorkerConfig = {
     },
     {
       id: 'tv',
-      name: 'LunaTV（zeabur）',
+      name: 'LunaTV',
       method: 'HEAD',
       target: 'https://tv.945426.xyz/',
       tooltip: 'zeabur',
