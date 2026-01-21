@@ -10,7 +10,7 @@ import MonitorDetail from '@/components/MonitorDetail'
 import Footer from '@/components/Footer'
 import { useTranslation } from 'react-i18next'
 import { CompactedMonitorStateWrapper, getFromStore } from '@/worker/src/store'
-import { useRouter } from 'next/router'
+import { GetServerSidePropsContext } from 'next'
 
 // 兼容性补丁
 if (typeof Uint8Array !== 'undefined' && !(Uint8Array as any).fromHex) {
@@ -83,6 +83,12 @@ export default function Home({
     </>
   )
 }
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  context.res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=0, max-age=0, must-revalidate'
+  )
 
   // Read state as string from storage, to avoid hitting server-side cpu time limit
   const compactedStateStr = await getFromStore(process.env as any, 'state')
