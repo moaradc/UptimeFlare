@@ -1,10 +1,11 @@
 import { MaintenanceConfig, MonitorTarget } from '@/types/config'
-import { Center, Container, Title, Collapse, Button, Box } from '@mantine/core'
-import { IconCircleCheck, IconAlertCircle, IconPlus, IconMinus } from '@tabler/icons-react'
+import { Center, Container, Title, Collapse, Box } from '@mantine/core'
+import { IconCircleCheck, IconAlertCircle } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
 import MaintenanceAlert from './MaintenanceAlert'
 import { pageConfig } from '@/uptime.config'
 import { useTranslation } from 'react-i18next'
+import { useRouter } from 'next/router'
 
 function useWindowVisibility() {
   const [isVisible, setIsVisible] = useState(true)
@@ -26,6 +27,7 @@ export default function OverallStatus({
   monitors: MonitorTarget[]
 }) {
   const { t } = useTranslation('common')
+  const router = useRouter()
   let group = pageConfig.group
   let groupedMonitor = (group && Object.keys(group).length > 0) || false
 
@@ -45,21 +47,33 @@ export default function OverallStatus({
     })
   }
 
-  const [openTime] = useState(Math.round(Date.now() / 1000))
   const [currentTime, setCurrentTime] = useState(Math.round(Date.now() / 1000))
   const isWindowVisible = useWindowVisibility()
   const [expandUpcoming, setExpandUpcoming] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isWindowVisible) return
-      if (currentTime - state.lastUpdate > 300 && currentTime - openTime > 30) {
-        window.location.reload()
-      }
       setCurrentTime(Math.round(Date.now() / 1000))
     }, 1000)
     return () => clearInterval(interval)
-  })
+  }, [])
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+
+    if (isWindowVisible) {
+      const refreshData = () => {
+        router.replace(router.asPath, undefined, { scroll: false })
+      }
+      interval = setInterval(refreshData, 60000)
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [isWindowVisible, router])
 
   const now = new Date()
 
@@ -94,7 +108,7 @@ export default function OverallStatus({
       <Title mt="sm" style={{ textAlign: 'center', color: '#70778c' }} order={5}>
         {t('Last updated on', {
           date: new Date(state.lastUpdate * 1000).toLocaleString(),
-          seconds: currentTime - state.lastUpdate,
+          seconds: Math.max(0, currentTime - state.lastUpdate),
         })}
       </Title>
 
