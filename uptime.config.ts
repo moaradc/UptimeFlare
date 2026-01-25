@@ -174,7 +174,6 @@ const workerConfig: WorkerConfig = {
       method: 'HEAD',
       target: 'https://waline.945426.xyz/',
       tooltip: 'Vercel',
-      statusPageLink: 'https://waline.945426.xyz/',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
       expectedCodes: [200],
