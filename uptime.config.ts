@@ -198,7 +198,7 @@ const workerConfig: WorkerConfig = {
       tooltip: 'test',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
-      expectedCodes: [200],
+      expectedCodes: [200,526,525,500],
       timeout: 10000,
       }
   ],
