@@ -189,7 +189,18 @@ const workerConfig: WorkerConfig = {
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
-    }
+    },
+    {
+      id: 'test2',
+      name: 'test2',
+      method: 'HEAD',
+      target: 'https://wa.945426.xyz/',
+      tooltip: 'test',
+      checkProxy: 'worker://apac',
+      hideLatencyChart: false,
+      expectedCodes: [200],
+      timeout: 10000,
+      }
   ],
   callbacks: {
      onStatusChange: async (
