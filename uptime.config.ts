@@ -230,12 +230,20 @@ const workerConfig: WorkerConfig = {
           try {
             timeString = new Date(timeNow * 1000).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
           } catch (e) { }
+          
           let bigStatusCode = isUp ? '200' : '500'; 
-
           if (!isUp) {
-            const codeMatch = reason.match(/Got:\s*(\d+)/i) || reason.match(/status:\s*(\d+)/i);
-            if (codeMatch && codeMatch[1]) {
-              bigStatusCode = codeMatch[1];
+            if (reason.includes("Timeout after")) {
+              bigStatusCode = '408'; // 超时
+            } else if (reason.includes("doesn't contain")) {
+              bigStatusCode = 'KEY'; // 关键词错误 (Keyword)
+            } else if (reason.includes("check proxy error")) {
+              bigStatusCode = 'PRX'; // 代理错误 (Proxy)
+            } else {
+              const codeMatch = reason.match(/Got:\s*(\d+)/i) || reason.match(/status:\s*(\d+)/i);
+              if (codeMatch && codeMatch[1]) {
+                bigStatusCode = codeMatch[1];
+              }
             }
           }
           
