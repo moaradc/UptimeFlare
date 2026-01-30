@@ -189,17 +189,6 @@ const workerConfig: WorkerConfig = {
       hideLatencyChart: false,
       expectedCodes: [200],
       timeout: 10000,
-    },
-    {
-      id: 'test2',
-      name: 'flaredrive',
-      method: 'HEAD',
-      target: 'https://testr2.945426.xyz/',
-      tooltip: 'test',
-      checkProxy: 'worker://apac',
-      hideLatencyChart: false,
-      expectedCodes: [200],
-      timeout: 10000,
     }
   ],
   callbacks: {
