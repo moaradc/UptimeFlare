@@ -183,7 +183,7 @@ const workerConfig: WorkerConfig = {
       id: 'test',
       name: 'test',
       method: 'HEAD',
-      target: 'https://worker.521116.xyz/',
+      target: 'https://worker.945426.xyz/',
       tooltip: 'test',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
