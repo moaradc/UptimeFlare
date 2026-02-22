@@ -343,7 +343,14 @@ const workerConfig: WorkerConfig = {
 // 同时，相关的宕机通知将被跳过（如果配置了通知）
 // 当然，如果不需要此功能，也可以保持留空
 
-const maintenances: MaintenanceConfig[] = []
+const maintenances: MaintenanceConfig[] = [
+  {
+    monitors: ['tv'],
+    body: '部分服务故障，暂时关闭',
+    start: '2026-02-22T17:45:00+08:00',
+    color: 'yellow',
+  }
+]
 
 // const maintenances: MaintenanceConfig[] = [
 //   {
