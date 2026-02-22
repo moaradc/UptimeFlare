@@ -10,6 +10,38 @@ const pageConfig: PageConfig = {
   ],
 }
 
+// 您可以在此定义多个维护窗口
+// 维护期间，状态页将显示告警提示
+// 同时，相关的宕机通知将被跳过（如果配置了通知）
+// 当然，如果不需要此功能，也可以保持留空
+
+const maintenances: MaintenanceConfig[] = [
+{
+    monitors: ['tv'],
+    body: '部分服务故障，暂时关闭',
+    start: '2026-02-22T17:45:00+08:00',
+    color: 'yellow',
+  }
+]
+
+// const maintenances: MaintenanceConfig[] = [
+//   {
+    // [可选] 受此维护影响的监控器ID
+    // monitors: ['foo_monitor', 'bar_monitor'],
+    // [可选] 若未指定则默认为"计划维护"
+    // title: 'Test Maintenance',
+    // 维护相关说明会显示在状态页面上。
+    // body: '这是一次测试维护，进行服务器软件升级',
+    // 维护开始时间，使用 UNIX 时间戳或 ISO 8601 格式
+    // start: '2020-01-01T00:00:00+08:00',
+    // [可选] 维护结束时间，使用 UNIX 时间戳或 ISO 8601 格式
+    // 若未指定，则视为持续维护中
+    // end: '2050-01-01T00:00:00+08:00',
+    // [可选] 状态页面上维护提醒的颜色，默认为 "yellow"（黄色）
+    // color: 'blue',
+//   },
+// ]
+
 const workerConfig: WorkerConfig = {
   // Define all your monitors here
   monitors: [
@@ -169,6 +201,17 @@ const workerConfig: WorkerConfig = {
       timeout: 10000,
     },
     {
+      id: 'tv',
+      name: 'LunaTV',
+      method: 'HEAD',
+      target: 'https://tv.945426.xyz/',
+      tooltip: 'zeabur',
+      checkProxy: 'worker://apac',
+      hideLatencyChart: false,
+      expectedCodes: [200],
+      timeout: 10000,
+    },
+    {
       id: 'test',
       name: 'test',
       method: 'HEAD',
@@ -189,6 +232,21 @@ const workerConfig: WorkerConfig = {
       timeNow: number,
       reason: string
     ) => {
+      const isUnderMaintenance = maintenances.some((m) => {
+
+        if (m.monitors && m.monitors.length > 0 && !m.monitors.includes(monitor.id)) {
+          return false;
+        }
+        
+        const startTs = new Date(m.start).getTime() / 1000;
+        const endTs = m.end ? new Date(m.end).getTime() / 1000 : Infinity;
+
+        return timeNow >= startTs && timeNow <= endTs;
+      });
+
+      if (isUnderMaintenance) {
+        return; 
+      }
       // 当任何监控的状态发生变化时，将调用此回调
       // 在这里编写任何 Typescript 代码
       // 注意：已在 webhook 中配置了 Resend 基础通知
@@ -327,30 +385,6 @@ const workerConfig: WorkerConfig = {
   },
 }
 
-// 您可以在此定义多个维护窗口
-// 维护期间，状态页将显示告警提示
-// 同时，相关的宕机通知将被跳过（如果配置了通知）
-// 当然，如果不需要此功能，也可以保持留空
-
-const maintenances: MaintenanceConfig[] = []
-
-// const maintenances: MaintenanceConfig[] = [
-//   {
-    // [可选] 受此维护影响的监控器ID
-    // monitors: ['foo_monitor', 'bar_monitor'],
-    // [可选] 若未指定则默认为"计划维护"
-    // title: 'Test Maintenance',
-    // 维护相关说明会显示在状态页面上。
-    // body: '这是一次测试维护，进行服务器软件升级',
-    // 维护开始时间，使用 UNIX 时间戳或 ISO 8601 格式
-    // start: '2020-01-01T00:00:00+08:00',
-    // [可选] 维护结束时间，使用 UNIX 时间戳或 ISO 8601 格式
-    // 若未指定，则视为持续维护中
-    // end: '2050-01-01T00:00:00+08:00',
-    // [可选] 状态页面上维护提醒的颜色，默认为 "yellow"（黄色）
-    // color: 'blue',
-//   },
-// ]
 
 // 请勿编辑此行
 export { maintenances, pageConfig, workerConfig }
