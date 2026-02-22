@@ -158,17 +158,6 @@ const workerConfig: WorkerConfig = {
       timeout: 10000,
     },
     {
-      id: 'tv',
-      name: 'LunaTV',
-      method: 'HEAD',
-      target: 'https://tv.945426.xyz/',
-      tooltip: 'zeabur',
-      checkProxy: 'worker://apac',
-      hideLatencyChart: false,
-      expectedCodes: [200],
-      timeout: 10000,
-    },
-    {
       id: 'waline',
       name: 'Waline 评论系统',
       method: 'HEAD',
@@ -343,14 +332,7 @@ const workerConfig: WorkerConfig = {
 // 同时，相关的宕机通知将被跳过（如果配置了通知）
 // 当然，如果不需要此功能，也可以保持留空
 
-const maintenances: MaintenanceConfig[] = [
-  {
-    monitors: ['tv'],
-    body: '部分服务故障，暂时关闭',
-    start: '2026-02-22T17:45:00+08:00',
-    color: 'yellow',
-  }
-]
+const maintenances: MaintenanceConfig[] = []
 
 // const maintenances: MaintenanceConfig[] = [
 //   {
