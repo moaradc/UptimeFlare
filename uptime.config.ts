@@ -15,14 +15,7 @@ const pageConfig: PageConfig = {
 // 同时，相关的宕机通知将被跳过（如果配置了通知）
 // 当然，如果不需要此功能，也可以保持留空
 
-const maintenances: MaintenanceConfig[] = [
-{
-    monitors: ['tv'],
-    body: '部分服务故障，暂时关闭',
-    start: '2026-02-22T17:45:00+08:00',
-    color: 'yellow',
-  }
-]
+const maintenances: MaintenanceConfig[] = []
 
 // const maintenances: MaintenanceConfig[] = [
 //   {
@@ -158,7 +151,7 @@ const workerConfig: WorkerConfig = {
       id: 'lddc2',
       name: 'LDDC API',
       method: 'HEAD',
-      target: 'https://lddc.945426.xyz/',
+      target: 'https://lddc2.945426.xyz/',
       tooltip: 'leapcell节点',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
@@ -195,17 +188,6 @@ const workerConfig: WorkerConfig = {
       method: 'HEAD',
       target: 'https://waline.945426.xyz/',
       tooltip: 'Vercel',
-      checkProxy: 'worker://apac',
-      hideLatencyChart: false,
-      expectedCodes: [200],
-      timeout: 10000,
-    },
-    {
-      id: 'tv',
-      name: 'LunaTV',
-      method: 'HEAD',
-      target: 'https://tv.945426.xyz/',
-      tooltip: 'zeabur',
       checkProxy: 'worker://apac',
       hideLatencyChart: false,
       expectedCodes: [200],
