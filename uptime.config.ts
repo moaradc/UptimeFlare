@@ -125,17 +125,6 @@ const workerConfig: WorkerConfig = {
       expectedCodes: [200],
       timeout: 10000,
     },
-    {
-      id: 'lddc-pages',
-      name: 'LDDC API Pages',
-      method: 'HEAD',
-      target: 'https://lddcapi.945426.xyz/',
-      statusPageLink: 'https://lddcapi.945426.xyz/',
-      checkProxy: 'worker://apac',
-      hideLatencyChart: false,
-      expectedCodes: [200],
-      timeout: 10000,
-    },
 //    {
 //      id: 'pansou',
 //      name: '盘搜',
